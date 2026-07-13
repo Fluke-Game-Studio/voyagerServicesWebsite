@@ -10,6 +10,18 @@
     />
     <meta name="theme-color" content="#070b14" />
     <title>Voyager Services — Managed U.S. Supply Chain</title>
+
+    <!-- Critical: preconnect to Google Fonts to eliminate DNS + TLS round-trips -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Non-blocking font load with font-display:swap so text renders immediately -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Eliminate flash of unstyled background -->
     <style>
       html { background: #070b14; }
     </style>

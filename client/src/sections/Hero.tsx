@@ -1,12 +1,51 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, lazy, Suspense } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight, PlayCircle } from 'lucide-react'
-import { GlobeScene } from '@/three/GlobeScene'
 import { Button } from '@/components/ui/Button'
 import { staggerContainer, fadeUp } from '@/lib/motion'
 import { BRAND } from '@/lib/content'
 import { useTheme } from '@/lib/theme'
 import { gsap } from '@/lib/gsap'
+
+// Lazy-load the 3-D globe — Three.js is ~600 KB and must never block first paint
+const GlobeScene = lazy(() => import('@/three/GlobeScene').then(m => ({ default: m.GlobeScene })))
+
+/** CSS-only animated globe silhouette shown while Three.js loads */
+function GlobeSkeleton() {
+  return (
+    <div className="relative h-full w-full">
+      {/* Gradient sphere */}
+      <div
+        className="absolute inset-0 rounded-full opacity-30"
+        style={{
+          background: 'radial-gradient(circle at 38% 36%, var(--color-accent) 0%, var(--color-surface) 55%, transparent 75%)',
+        }}
+      />
+      {/* Outer orbital ring */}
+      <div
+        className="absolute inset-[8%] rounded-full border border-[var(--color-accent)] opacity-20"
+        style={{ animation: 'spin 8s linear infinite' }}
+      />
+      {/* Mid orbital ring — tilted via scaleY */}
+      <div
+        className="absolute inset-[18%] rounded-full border border-[var(--color-accent-glow)] opacity-15"
+        style={{ animation: 'spin 5s linear infinite reverse', transform: 'scaleY(0.35)' }}
+      />
+      {/* Inner orbital ring */}
+      <div
+        className="absolute inset-[30%] rounded-full border border-[var(--color-accent)] opacity-20"
+        style={{ animation: 'spin 3s linear infinite', transform: 'scaleY(0.5) rotate(60deg)' }}
+      />
+      {/* Pulsing core dot */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <span className="relative flex h-4 w-4">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-accent)] opacity-50" />
+          <span className="relative inline-flex h-4 w-4 rounded-full bg-[var(--color-accent)] opacity-60" />
+        </span>
+      </div>
+    </div>
+  )
+}
 
 export function Hero() {
   const { theme } = useTheme()
@@ -27,7 +66,7 @@ export function Hero() {
 
   return (
     <section ref={section} className="relative min-h-screen overflow-hidden">
-      {/* Globe — masked to a soft circle so the canvas box never shows */}
+      {/* Globe — lazy-loaded so Three.js never blocks first paint */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center lg:left-auto lg:right-[-8%] lg:w-[62%] lg:pointer-events-auto">
         <div
           ref={globe}
@@ -37,9 +76,12 @@ export function Hero() {
             WebkitMaskImage: 'radial-gradient(circle at 50% 46%, #000 46%, transparent 68%)',
           }}
         >
-          <GlobeScene theme={theme} className="h-full w-full" />
+          <Suspense fallback={<GlobeSkeleton />}>
+            <GlobeScene theme={theme} className="h-full w-full" />
+          </Suspense>
         </div>
       </div>
+
 
       {/* legibility overlay — fades to the current theme background on the copy side */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_26%_46%,transparent_0%,color-mix(in_srgb,var(--color-bg)_72%,transparent)_60%)]" />
