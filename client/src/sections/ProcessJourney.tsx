@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { PROCESS_STEPS } from '@/lib/content'
 import { staggerContainer, fadeUp, viewportOnce } from '@/lib/motion'
 import { useTheme } from '@/lib/theme'
@@ -149,8 +149,7 @@ function WaypointAnimation({ index, color, isActive }: { index: number; color: s
               stroke={color}
               strokeWidth={1.5}
               animate={{ rotate: isActive ? [0, -25, 0] : [0, -12, 0] }}
-              originX="-7px"
-              originY="-2px"
+              style={{ originX: '-7px', originY: '-2px' }}
               transition={{ repeat: Infinity, duration: 2 * durationMultiplier, ease: 'easeInOut' }}
             />
             <motion.path
@@ -159,8 +158,7 @@ function WaypointAnimation({ index, color, isActive }: { index: number; color: s
               stroke={color}
               strokeWidth={1.5}
               animate={{ rotate: isActive ? [0, 25, 0] : [0, 12, 0] }}
-              originX="7px"
-              originY="-2px"
+              style={{ originX: '7px', originY: '-2px' }}
               transition={{ repeat: Infinity, duration: 2 * durationMultiplier, ease: 'easeInOut' }}
             />
           </motion.g>
