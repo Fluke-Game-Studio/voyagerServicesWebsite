@@ -1,3 +1,4 @@
+
 import { useLayoutEffect, useRef, lazy, Suspense } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight, PlayCircle } from 'lucide-react'

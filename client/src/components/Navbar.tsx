@@ -32,8 +32,10 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        'fixed inset-x-0 top-0 z-50 transition-all duration-300',
-        scrolled ? 'border-b border-[var(--color-border-soft)] bg-[var(--color-bg)]/80 backdrop-blur-xl' : 'bg-transparent',
+        'fixed left-1/2 -translate-x-1/2 z-[200] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]',
+        scrolled
+          ? 'top-4 w-[calc(100%-2rem)] max-w-5xl rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-bg)]/85 backdrop-blur-xl shadow-lg shadow-black/10'
+          : 'top-0 w-full max-w-none bg-transparent border-b border-transparent',
       )}
     >
       <nav className="mx-auto flex h-18 max-w-6xl items-center justify-between px-6 py-3">

@@ -14,7 +14,7 @@ export function Market() {
         eyebrow="Market & Timing"
         title="A large market, opening now"
         intro="Massive logistics spend plus newly-flexible industrial capacity creates room for a managed, asset-light model."
-        className="relative"
+        className="relative py-6 md:py-8 lg:py-10"
       >
         <motion.div
           variants={staggerContainer(0.12)}
@@ -59,10 +59,6 @@ export function Market() {
             </motion.div>
           ))}
         </motion.div>
-
-        <p className="mt-8 font-mono text-xs text-[var(--color-ink-faint)]">
-          Sources: CSCMP/Penske State of Logistics · BEA trade release · CBRE / Cushman & Wakefield Q1 2026.
-        </p>
       </Section>
     </div>
   )

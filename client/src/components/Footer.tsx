@@ -4,7 +4,7 @@ import { BRAND } from '@/lib/content'
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-[var(--color-border-soft)] bg-[var(--color-bg-soft)]">
+    <footer className="relative z-50 md:z-[100] border-t border-[var(--color-border-soft)] bg-[var(--color-bg-soft)]">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <Logo />
