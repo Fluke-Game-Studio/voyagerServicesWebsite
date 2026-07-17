@@ -74,6 +74,11 @@
     scroll-behavior: smooth;
   }
 
+  /* Anchor targets land below the fixed navbar */
+  section[id] {
+    scroll-margin-top: 5.5rem;
+  }
+
   body {
     margin: 0;
     background-color: var(--color-bg);

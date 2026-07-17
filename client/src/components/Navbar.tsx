@@ -8,8 +8,6 @@ import { ThemeToggle } from './ThemeToggle'
 import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
-  { label: 'The Gap', href: '/#gap' },
-  { label: 'Market', href: '/#market' },
   { label: 'How it works', href: '/#process' },
   { label: 'Services', href: '/#services' },
   { label: 'Who we serve', href: '/#audiences' },

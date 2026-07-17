@@ -31,7 +31,7 @@ export function ControlTower() {
             One control tower for the whole network
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-[var(--color-ink-muted)] lg:text-base">
-            Voyager doesn't own every warehouse or truck. It coordinates the ecosystem — sourcing capacity, managing partners, maintaining visibility, handling exceptions — and owns the operating experience.
+            Voyager Services is a managed U.S. supply chain partner, helping manufacturers store and distribute products with flexibility, visibility, and control.
           </p>
 
           {/* Node chips list on desktop (moved side-by-side) */}

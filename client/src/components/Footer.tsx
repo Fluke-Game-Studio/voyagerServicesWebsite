@@ -14,8 +14,6 @@ export function Footer() {
         <div>
           <p className="label-mono mb-4">Explore</p>
           <ul className="space-y-2.5 text-sm text-[var(--color-ink-muted)]">
-            <li><a href="/#gap" className="hover:text-[var(--color-ink)]">The Gap</a></li>
-            <li><a href="/#market" className="hover:text-[var(--color-ink)]">Market & Timing</a></li>
             <li><a href="/#process" className="hover:text-[var(--color-ink)]">How it works</a></li>
             <li><a href="/#services" className="hover:text-[var(--color-ink)]">Services</a></li>
           </ul>

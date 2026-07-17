@@ -12,11 +12,11 @@ export function CTA() {
           <div className="relative">
             <p className="label-mono mb-4">Next step</p>
             <h2 className="mx-auto max-w-2xl font-display text-3xl font-bold leading-tight tracking-tight text-[var(--color-ink)] md:text-5xl">
-              Run a pilot with us
+              Start small. Scale with confidence.
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-[var(--color-ink-muted)]">
-              We'll take 2–3 pilot lanes through a controlled U.S. warehousing + distribution process and turn the
-              learnings into repeatable, transparent workflows.
+              Send us your first shipment and see how we work — we'll receive, store and deliver your products
+              with full visibility at every step. Once you're confident, scaling up is easy.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button to="/contact" size="lg">

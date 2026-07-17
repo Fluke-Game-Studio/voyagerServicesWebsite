@@ -1,7 +1,7 @@
 
 import { useLayoutEffect, useRef, lazy, Suspense } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowRight, PlayCircle } from 'lucide-react'
+import { PlayCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { staggerContainer, fadeUp } from '@/lib/motion'
 import { BRAND } from '@/lib/content'
@@ -125,10 +125,7 @@ export function Hero() {
           </motion.p>
 
           <motion.div variants={fadeUp} className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Button to="/contact" size="lg">
-              Run a pilot with us <ArrowRight className="h-4 w-4" />
-            </Button>
-            <Button href="#gap" variant="outline" size="lg">
+            <Button href="#process" variant="outline" size="lg">
               <PlayCircle className="h-4 w-4" /> See how it works
             </Button>
           </motion.div>

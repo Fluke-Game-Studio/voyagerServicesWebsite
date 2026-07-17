@@ -16,8 +16,6 @@ import {
   LineChart,
   Network,
   Eye,
-  Split,
-  Shuffle,
   Search,
   Ship,
   PackageCheck,
@@ -34,60 +32,6 @@ export const BRAND = {
     'Enter and scale in the U.S. without building warehouses, hiring logistics teams, or stitching together fragmented providers.',
   email: 'partners@voyagerservices.co',
 }
-
-/* ---- Slide 2: the gap ---- */
-export const GAP_POINTS: { n: string; title: string; body: string; icon: LucideIcon }[] = [
-  {
-    n: '01',
-    title: 'Multiple vendors',
-    body: 'Warehouse, trucker, customs broker, parcel/LTL carrier and reporting all live separately.',
-    icon: Split,
-  },
-  {
-    n: '02',
-    title: 'No single accountability',
-    body: 'When orders are late or inventory is inaccurate, ownership becomes unclear.',
-    icon: Network,
-  },
-  {
-    n: '03',
-    title: 'Visibility gap',
-    body: 'Inventory and shipment status arrive by email, spreadsheet or manual portal checks.',
-    icon: Eye,
-  },
-  {
-    n: '04',
-    title: 'Asset mismatch',
-    body: 'Customers either overcommit to fixed space or scramble for short-term overflow.',
-    icon: Shuffle,
-  },
-]
-
-/* ---- Slide 3: market ---- */
-export const MARKET_STATS: { value: number; prefix?: string; suffix?: string; label: string; decimals?: number }[] = [
-  { value: 2.4, prefix: '$', suffix: 'T', label: 'U.S. business logistics costs (CSCMP/Penske)', decimals: 1 },
-  { value: 3.44, prefix: '$', suffix: 'T', label: '2025 U.S. goods imports driving inbound demand', decimals: 2 },
-  { value: 7.0, suffix: '%', label: 'Q1 2026 U.S. industrial vacancy (CBRE/Cushman)', decimals: 1 },
-]
-
-export const MARKET_WHY: { title: string; body: string }[] = [
-  {
-    title: 'Flexible capacity',
-    body: 'More available warehouse capacity lets customers avoid long-term commitments while partners monetize unused space.',
-  },
-  {
-    title: 'Nearshoring & tariff uncertainty',
-    body: 'Importers need flexible U.S. inventory strategies and faster response to policy and demand shifts.',
-  },
-  {
-    title: 'Visibility expectations',
-    body: 'Manufacturers expect portal-level inventory and shipment visibility from smaller providers too.',
-  },
-  {
-    title: '3PL outsourcing',
-    body: 'Customers prefer outsourcing execution complexity while retaining commercial control.',
-  },
-]
 
 /* ---- Slide 5: process ---- */
 export const PROCESS_STEPS: { n: number; title: string; body: string; icon: LucideIcon }[] = [

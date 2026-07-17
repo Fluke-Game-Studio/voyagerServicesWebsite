@@ -14,7 +14,7 @@ const isValidRole = (r: string | null): boolean => ROLES.some((x) => x.value ===
 
 const ASSURANCES = [
   { icon: ShieldCheck, text: 'Transparent pricing — actual operating costs plus a clearly defined Voyager fee.' },
-  { icon: Clock, text: 'We respond within two business days with next steps for a focused pilot.' },
+  { icon: Clock, text: 'We respond within two business days with clear next steps for your operation.' },
   { icon: Mail, text: 'No spam, ever. Your details are used only to scope your operation.' },
 ]
 
@@ -79,11 +79,11 @@ export function Contact() {
             variants={fadeUp}
             className="font-display text-4xl font-bold leading-[1.1] tracking-tight text-[var(--color-ink)] md:text-5xl"
           >
-            Let's run a pilot together
+            Let's get your products moving
           </motion.h1>
           <motion.p variants={fadeUp} className="mt-5 max-w-md text-lg leading-relaxed text-[var(--color-ink-muted)]">
-            Tell us about your product and where it needs to go. We'll come back with a focused plan for a controlled
-            U.S. warehousing + distribution pilot.
+            Tell us about your product and where it needs to go. We'll come back with a clear plan for storing and
+            distributing it in the U.S. — starting with your first shipment.
           </motion.p>
 
           <motion.ul variants={staggerContainer(0.08, 0.2)} className="mt-10 space-y-5">

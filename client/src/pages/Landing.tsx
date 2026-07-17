@@ -1,7 +1,5 @@
 import { lazy, Suspense } from 'react'
 import { Hero } from '@/sections/Hero'
-import { Gap } from '@/sections/Gap'
-import { Market } from '@/sections/Market'
 
 // Below-the-fold sections — lazy-loaded so their JS doesn't block initial paint
 const ControlTower   = lazy(() => import('@/sections/ControlTower').then(m => ({ default: m.ControlTower })))
@@ -16,52 +14,14 @@ function SectionSkeleton({ minH = 'min-h-[320px]' }: { minH?: string }) {
   return <div className={`w-full ${minH}`} />
 }
 
-interface StackSectionProps {
-  id?: string
-  children: React.ReactNode
-  zIndex: number
-  bg: string
-  panelClassName?: string
-  /** Only set this for sections that need extra scroll time (e.g. Process → "md:h-[200vh]") */
-  trackHeight?: string
-  noRound?: boolean
-}
-
 /**
- * Card-stack layout primitive.
- *
- * NORMAL sections → single sticky div. All siblings share the same scroll parent,
- * so each section slides up and stacks on top of the previous one as you scroll.
- *
- * PROCESS section → two-div pattern (outer track = 200vh, inner sticky panel = 100vh)
- * so the path animation plays fully before the next card covers it.
+ * Full-width section band: alternating backgrounds and a hairline divider give
+ * the page rhythm while sections scroll in normal document flow. Each section
+ * animates its own content into view (Reveal / whileInView staggers).
  */
-function StackSection({ id, children, zIndex, bg, panelClassName, trackHeight, noRound }: StackSectionProps) {
-  const cardClasses = [
-    'w-full min-h-screen flex flex-col justify-center',
-    bg,
-    panelClassName || '',
-    noRound ? '' : 'md:rounded-t-[20px] md:shadow-[0_-8px_32px_rgba(0,0,0,0.2)]',
-  ].join(' ')
-
-  if (trackHeight) {
-    // Two-div: outer provides scroll length, inner sticks for that duration
-    return (
-      <div id={id} className={`relative w-full ${trackHeight}`} style={{ zIndex }}>
-        <div className={`md:sticky md:top-0 md:h-screen ${cardClasses}`}>
-          {children}
-        </div>
-      </div>
-    )
-  }
-
-  // Single sticky div — the classic card stack pattern
+function Band({ bg, children }: { bg: string; children: React.ReactNode }) {
   return (
-    <div
-      id={id}
-      className={`md:sticky md:top-0 ${cardClasses}`}
-      style={{ zIndex }}
-    >
+    <div className={`relative border-t border-[var(--color-border-soft)] py-10 md:py-14 ${bg}`}>
       {children}
     </div>
   )
@@ -70,55 +30,43 @@ function StackSection({ id, children, zIndex, bg, panelClassName, trackHeight, n
 export function Landing() {
   return (
     <>
-      <StackSection zIndex={10} bg="bg-[var(--color-bg)]" noRound>
-        <Hero />
-      </StackSection>
+      <Hero />
 
-      <StackSection zIndex={20} bg="bg-[var(--color-surface)]" panelClassName="pt-20">
-        <Gap />
-      </StackSection>
-
-      <StackSection zIndex={30} bg="bg-[var(--color-bg)]" panelClassName="pt-20">
-        <Market />
-      </StackSection>
-
-      <StackSection zIndex={40} bg="bg-[var(--color-surface)]" panelClassName="pt-20">
+      <Band bg="bg-[var(--color-surface)]">
         <Suspense fallback={<SectionSkeleton minH="min-h-[480px]" />}>
           <ControlTower />
         </Suspense>
-      </StackSection>
+      </Band>
 
-      {/* Process: sticky like other sections. Animation starts early so path completes before Services slides on top. */}
-      <StackSection id="process-track" zIndex={50} bg="bg-[var(--color-bg)]" panelClassName="pt-20">
+      <Band bg="bg-[var(--color-bg)]">
         <Suspense fallback={<SectionSkeleton minH="min-h-[640px]" />}>
           <Process />
         </Suspense>
-      </StackSection>
+      </Band>
 
-      <StackSection zIndex={60} bg="bg-[var(--color-surface)]" panelClassName="pt-20">
+      <Band bg="bg-[var(--color-surface)]">
         <Suspense fallback={<SectionSkeleton />}>
           <Services />
         </Suspense>
-      </StackSection>
+      </Band>
 
-      <StackSection zIndex={70} bg="bg-[var(--color-bg)]" panelClassName="pt-20">
+      <Band bg="bg-[var(--color-bg)]">
         <Suspense fallback={<SectionSkeleton />}>
           <WhyVoyager />
         </Suspense>
-      </StackSection>
+      </Band>
 
-      <StackSection zIndex={80} bg="bg-[var(--color-surface)]" panelClassName="pt-20">
+      <Band bg="bg-[var(--color-surface)]">
         <Suspense fallback={<SectionSkeleton />}>
           <Audiences />
         </Suspense>
-      </StackSection>
+      </Band>
 
-      <StackSection zIndex={90} bg="bg-[var(--color-bg)]" panelClassName="pt-20">
+      <Band bg="bg-[var(--color-bg)]">
         <Suspense fallback={<SectionSkeleton />}>
           <CTA />
         </Suspense>
-      </StackSection>
+      </Band>
     </>
   )
 }
-
