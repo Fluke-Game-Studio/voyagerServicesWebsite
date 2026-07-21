@@ -12,7 +12,7 @@ If your hosting account uses a different absolute path, set `FTP_REMOTE_BASE_DIR
 
 For your current hosting account, that base folder should be:
 
-- `/home/voyahsek/voyagersupplychain.com/voyserv`
+- `voyagersupplychain.com`
 
 ## What to configure in GitHub
 
@@ -24,15 +24,15 @@ Add these repository secrets:
 
 Add these repository variables:
 
-- `FTP_REMOTE_BASE_DIR` - example: `/home/voyahsek/voyagersupplychain.com/voyserv`
+- `FTP_REMOTE_BASE_DIR` - example: `voyagersupplychain.com`
 - `FTP_PORT` - optional, default is `21`
 - `FTP_PROTOCOL` - optional, default is `ftps`
 
 ## What to configure on the host
 
-- Point the production domain document root at `/home/voyahsek/voyagersupplychain.com/voyserv/prod`
-- Point `qa.mydomain.com` at `/home/voyahsek/voyagersupplychain.com/voyserv/qa`
-- Point `dev.mydomain.com` at `/home/voyahsek/voyagersupplychain.com/voyserv/dev`
+- Point the production domain document root at `/home/voyahsek/voyagersupplychain.com/prod`
+- Point `qa.mydomain.com` at `/home/voyahsek/voyagersupplychain.com/qa`
+- Point `dev.mydomain.com` at `/home/voyahsek/voyagersupplychain.com/dev`
 
 If you are using a cPanel-style host, those usually become addon domains or subdomains with their own document roots.
 

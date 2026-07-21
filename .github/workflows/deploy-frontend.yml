@@ -57,7 +57,7 @@ jobs:
         run: |
           remote_base_dir="${{ vars.FTP_REMOTE_BASE_DIR }}"
           if [ -z "$remote_base_dir" ]; then
-            remote_base_dir="/home/voyahsek/voyagersupplychain.com/voyserv"
+            remote_base_dir="voyagersupplychain.com"
           fi
 
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
