@@ -8,9 +8,9 @@ This repo is set up so the `client/` folder is deployed as a static frontend.
 - `qa` branch -> `VoyagerServices/qa`
 - `dev` branch -> `VoyagerServices/dev`
 
-If your hosting account uses a different absolute path, set `FTP_REMOTE_BASE_DIR` to that base folder. The workflow will append `prod`, `qa`, or `dev` automatically.
+If your FTP account root already opens inside `voyagersupplychain.com`, leave `FTP_REMOTE_BASE_DIR` blank and the workflow will deploy directly to `prod/`, `qa/`, or `dev/`.
 
-For your current hosting account, that base folder should be:
+If your FTP account root is one level higher and you need the extra folder, set `FTP_REMOTE_BASE_DIR` to:
 
 - `voyagersupplychain.com`
 
@@ -24,7 +24,7 @@ Add these repository secrets:
 
 Add these repository variables:
 
-- `FTP_REMOTE_BASE_DIR` - example: `voyagersupplychain.com`
+- `FTP_REMOTE_BASE_DIR` - optional. Leave blank if the FTP login already lands in the domain folder.
 - `FTP_PORT` - optional, default is `21`
 - `FTP_PROTOCOL` - optional, default is `ftps`
 

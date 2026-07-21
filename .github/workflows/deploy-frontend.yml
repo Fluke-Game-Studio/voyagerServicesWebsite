@@ -56,9 +56,6 @@ jobs:
         shell: bash
         run: |
           remote_base_dir="${{ vars.FTP_REMOTE_BASE_DIR }}"
-          if [ -z "$remote_base_dir" ]; then
-            remote_base_dir="voyagersupplychain.com"
-          fi
 
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             target="${{ inputs.target }}"
@@ -77,6 +74,18 @@ jobs:
           echo "remote_base_dir=$remote_base_dir" >> "$GITHUB_OUTPUT"
           echo "target=$target" >> "$GITHUB_OUTPUT"
 
+      - name: Build remote path
+        id: remote-path
+        shell: bash
+        run: |
+          if [ -n "${{ steps.target.outputs.remote_base_dir }}" ]; then
+            server_dir="${{ steps.target.outputs.remote_base_dir }}/${{ steps.target.outputs.target }}/"
+          else
+            server_dir="${{ steps.target.outputs.target }}/"
+          fi
+
+          echo "server_dir=$server_dir" >> "$GITHUB_OUTPUT"
+
       - name: Upload to hosting
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -86,5 +95,5 @@ jobs:
           port: ${{ vars.FTP_PORT || 21 }}
           protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
           local-dir: client/dist/
-          server-dir: ${{ steps.target.outputs.remote_base_dir }}/${{ steps.target.outputs.target }}/
+          server-dir: ${{ steps.remote-path.outputs.server_dir }}
           dangerous-clean-slate: true
