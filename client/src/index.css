@@ -86,7 +86,9 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    overflow-x: hidden;
+    /* `clip` (not `hidden`): hidden can promote body to the scroll container,
+       which silently breaks the position:sticky section stacking */
+    overflow-x: clip;
     transition: background-color 0.4s ease, color 0.4s ease;
   }
 

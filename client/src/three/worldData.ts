@@ -1,64 +1,41 @@
 /**
- * Builds the globe's real-world geometry from Natural Earth data (bundled via
- * the `world-atlas` package, no network calls):
- *  - land dots: Fibonacci-sphere points kept only where they fall on land
- *  - country borders: coastlines + interior boundaries as line segments
- * Results are cached at module scope so theme toggles never recompute them.
+ * Globe geometry, precomputed at build time by scripts/generate-world-geometry.mjs
+ * into worldGeometry.json (land dots + country-border polylines on the unit
+ * sphere). This used to parse two topojson atlases and run ~11k spherical
+ * point-in-polygon tests on the main thread every visit — now it's a JSON read
+ * and one multiply per vertex. Results cached at module scope.
  */
-import { feature, mesh } from 'topojson-client'
-import { geoContains } from 'd3-geo'
-import landTopo from 'world-atlas/land-110m.json'
-import countriesTopo from 'world-atlas/countries-110m.json'
+import world from './worldGeometry.json'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const land = feature(landTopo as any, (landTopo as any).objects.land) as any
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const borderGeo = mesh(countriesTopo as any, (countriesTopo as any).objects.countries) as any
-
-function latLng(lat: number, lng: number, radius: number): [number, number, number] {
-  const phi = (90 - lat) * (Math.PI / 180)
-  const theta = (lng + 180) * (Math.PI / 180)
-  return [
-    -radius * Math.sin(phi) * Math.cos(theta),
-    radius * Math.cos(phi),
-    radius * Math.sin(phi) * Math.sin(theta),
-  ]
-}
+const { dots, lines } = world as { dots: number[]; lines: number[][] }
 
 let dotCache: Float32Array | null = null
-export function landDots(radius: number, samples = 11000): Float32Array {
+export function landDots(radius: number): Float32Array {
   if (dotCache) return dotCache
-  const out: number[] = []
-  const golden = Math.PI * (3 - Math.sqrt(5))
-  for (let i = 0; i < samples; i++) {
-    const y = 1 - (i / (samples - 1)) * 2
-    const r = Math.sqrt(1 - y * y)
-    const theta = golden * i
-    const x = Math.cos(theta) * r
-    const z = Math.sin(theta) * r
-    const lat = Math.asin(y) * (180 / Math.PI)
-    const lng = Math.atan2(z, -x) * (180 / Math.PI) - 180
-    const lngNorm = ((((lng + 180) % 360) + 360) % 360) - 180
-    if (geoContains(land, [lngNorm, lat])) {
-      out.push(x * radius, y * radius, z * radius)
-    }
-  }
-  dotCache = new Float32Array(out)
+  const out = new Float32Array(dots.length)
+  for (let i = 0; i < dots.length; i++) out[i] = dots[i] * radius
+  dotCache = out
   return dotCache
 }
 
 let borderCache: Float32Array | null = null
 export function borderSegments(radius: number): Float32Array {
   if (borderCache) return borderCache
-  const out: number[] = []
-  const lines: number[][][] = borderGeo.coordinates // MultiLineString
+  // polylines → line-segment soup (each consecutive vertex pair) for lineSegments
+  let segCount = 0
+  for (const line of lines) segCount += Math.max(0, line.length / 3 - 1)
+  const out = new Float32Array(segCount * 6)
+  let o = 0
   for (const line of lines) {
-    for (let i = 0; i < line.length - 1; i++) {
-      const a = latLng(line[i][1], line[i][0], radius)
-      const b = latLng(line[i + 1][1], line[i + 1][0], radius)
-      out.push(...a, ...b)
+    for (let i = 0; i + 5 < line.length; i += 3) {
+      out[o++] = line[i] * radius
+      out[o++] = line[i + 1] * radius
+      out[o++] = line[i + 2] * radius
+      out[o++] = line[i + 3] * radius
+      out[o++] = line[i + 4] * radius
+      out[o++] = line[i + 5] * radius
     }
   }
-  borderCache = new Float32Array(out)
+  borderCache = out
   return borderCache
 }
