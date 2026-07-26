@@ -180,7 +180,16 @@ function Stars({ count = 700 }) {
   )
 }
 
-export function GlobeScene({ className, theme = 'dark' }: { className?: string; theme?: Theme }) {
+export function GlobeScene({
+  className,
+  theme = 'dark',
+  active = true,
+}: {
+  className?: string
+  theme?: Theme
+  /** When false (hero scrolled out of view), the render loop is fully paused. */
+  active?: boolean
+}) {
   const p = PALETTES[theme]
   const reduce = useReducedMotion()
 
@@ -198,8 +207,9 @@ export function GlobeScene({ className, theme = 'dark' }: { className?: string; 
     <div className={className}>
       <Canvas
         camera={{ position: [0, 0.35, 3.05], fov: 42 }}
-        dpr={[1, 2]}
-        gl={{ antialias: true, alpha: true }}
+        dpr={[1, 1.5]}
+        frameloop={active ? 'always' : 'never'}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         style={{ background: 'transparent' }}
       >
         <ambientLight intensity={theme === 'light' ? 1.1 : 0.6} />

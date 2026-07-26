@@ -1,5 +1,5 @@
 
-import { useLayoutEffect, useRef, lazy, Suspense } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, lazy, Suspense } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { PlayCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -54,21 +54,43 @@ export function Hero() {
   const section = useRef<HTMLElement>(null)
   const content = useRef<HTMLDivElement>(null)
   const globe = useRef<HTMLDivElement>(null)
+  const [globeActive, setGlobeActive] = useState(true)
+
+  // The hero pins inside the section stack, so it never leaves the viewport —
+  // pause the WebGL render loop once other sections have covered it.
+  useEffect(() => {
+    let raf = 0
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() =>
+        setGlobeActive(window.scrollY < window.innerHeight * 1.2),
+      )
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(raf)
+    }
+  }, [])
 
   useLayoutEffect(() => {
     if (reduce || !section.current) return
     const ctx = gsap.context(() => {
-      const st = { trigger: section.current, start: 'top top', end: 'bottom top', scrub: true }
-      gsap.to(content.current, { yPercent: -16, opacity: 0.1, ease: 'none', scrollTrigger: st })
-      gsap.to(globe.current, { yPercent: 14, scale: 1.06, ease: 'none', scrollTrigger: { ...st } })
+      // Keyed to raw viewport scroll (not the section's rect) because the hero
+      // pins inside the section stack — its own position stops moving there.
+      const st = { start: 0, end: () => window.innerHeight, scrub: true }
+      gsap.to(content.current, { yPercent: -10, opacity: 0.4, ease: 'none', scrollTrigger: st })
+      gsap.to(globe.current, { yPercent: 10, scale: 1.05, ease: 'none', scrollTrigger: { ...st } })
     }, section)
     return () => ctx.revert()
   }, [reduce])
 
   return (
-    <section ref={section} className="relative min-h-screen overflow-hidden">
-      {/* Globe — lazy-loaded so Three.js never blocks first paint */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center lg:left-auto lg:right-[-8%] lg:w-[62%] lg:pointer-events-auto">
+    <section ref={section} className="relative min-h-svh overflow-hidden">
+      {/* Globe — lazy-loaded so Three.js never blocks first paint.
+          On phones it's dimmed + nudged up so the headline stays legible. */}
+      <div className="pointer-events-none absolute inset-0 flex -translate-y-[6%] items-center justify-center opacity-40 sm:opacity-55 lg:left-auto lg:right-[-8%] lg:w-[62%] lg:translate-y-0 lg:pointer-events-auto lg:opacity-100">
         <div
           ref={globe}
           className="h-[115vw] max-h-[880px] w-[115vw] max-w-[880px]"
@@ -78,7 +100,7 @@ export function Hero() {
           }}
         >
           <Suspense fallback={<GlobeSkeleton />}>
-            <GlobeScene theme={theme} className="h-full w-full" />
+            <GlobeScene theme={theme} active={globeActive} className="h-full w-full" />
           </Suspense>
         </div>
       </div>
@@ -86,11 +108,11 @@ export function Hero() {
 
       {/* legibility overlay — fades to the current theme background on the copy side */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_26%_46%,transparent_0%,color-mix(in_srgb,var(--color-bg)_72%,transparent)_60%)]" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[var(--color-bg)] to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-[var(--color-bg)] to-transparent lg:h-40" />
 
       <div
         ref={content}
-        className="pointer-events-none relative mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 pt-24"
+        className="pointer-events-none relative mx-auto flex min-h-svh max-w-6xl flex-col justify-center px-6 pt-24"
       >
         <motion.div
           variants={staggerContainer(0.12, 0.1)}
