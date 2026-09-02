@@ -26,13 +26,18 @@ export function Footer() {
             <li><Link to="/contact?role=warehouse" className="hover:text-[var(--color-ink)]">Become a partner</Link></li>
             <li><Link to="/contact?role=investor" className="hover:text-[var(--color-ink)]">Investor enquiries</Link></li>
             <li><a href={`mailto:${BRAND.email}`} className="hover:text-[var(--color-ink)]">{BRAND.email}</a></li>
+            <li><a href={`tel:${BRAND.phoneHref}`} className="hover:text-[var(--color-ink)]">{BRAND.phone}</a></li>
           </ul>
         </div>
       </div>
 
       <div className="border-t border-[var(--color-border-soft)]">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-6 text-xs text-[var(--color-ink-faint)] sm:flex-row">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-6 text-xs text-[var(--color-ink-faint)] sm:flex-row">
           <p>© {new Date().getFullYear()} {BRAND.name}. All rights reserved.</p>
+          <div className="flex items-center gap-4">
+            <Link to="/privacy" className="hover:text-[var(--color-ink)]">Privacy Policy</Link>
+            <Link to="/privacy#sms-terms" className="hover:text-[var(--color-ink)]">SMS Terms</Link>
+          </div>
           <p className="font-mono">Managed U.S. supply chain · asset-light control tower</p>
         </div>
       </div>

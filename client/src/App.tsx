@@ -9,8 +9,9 @@ import { ScrollProgress } from '@/components/ScrollProgress'
 import { Landing } from '@/pages/Landing'
 import { LoadingScreen } from '@/components/LoadingScreen'
 
-// Lazy-load Contact — only downloaded when user navigates to /contact
+// Lazy-load secondary pages — only downloaded when the user navigates to them
 const Contact = lazy(() => import('@/pages/Contact').then(m => ({ default: m.Contact })))
+const Privacy = lazy(() => import('@/pages/Privacy').then(m => ({ default: m.Privacy })))
 
 export default function App() {
   const [loaded, setLoaded] = useState(false)
@@ -33,6 +34,7 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/privacy" element={<Privacy />} />
               </Routes>
             </Suspense>
           </main>

@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle2, Loader2, Mail, ShieldCheck, Clock, ArrowRight } from 'lucide-react'
+import { CheckCircle2, Loader2, Mail, ShieldCheck, Clock, ArrowRight, Check } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { staggerContainer, fadeUp } from '@/lib/motion'
-import { AUDIENCES, BRAND } from '@/lib/content'
+import { AUDIENCES, BRAND, LEGAL } from '@/lib/content'
 import { submitContact } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
@@ -15,7 +15,7 @@ const isValidRole = (r: string | null): boolean => ROLES.some((x) => x.value ===
 const ASSURANCES = [
   { icon: ShieldCheck, text: 'Transparent pricing — actual operating costs plus a clearly defined Voyager fee.' },
   { icon: Clock, text: 'We respond within two business days with clear next steps for your operation.' },
-  { icon: Mail, text: 'No spam, ever. Your details are used only to scope your operation.' },
+  { icon: Mail, text: 'No spam, ever. Your details are used to scope and run your operation — never sold.' },
 ]
 
 export function Contact() {
@@ -25,14 +25,17 @@ export function Contact() {
     name: '',
     email: '',
     company: '',
+    phone: '',
     role: isValidRole(initialRole) ? (initialRole as string) : 'manufacturer',
     message: '',
+    // Carrier registration requires SMS opt-in to start unchecked and stay optional.
+    smsConsent: false,
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [status, setStatus] = useState<Status>('idle')
   const [serverMsg, setServerMsg] = useState('')
 
-  const set = (key: string, value: string) => {
+  const set = (key: string, value: string | boolean) => {
     setForm((f) => ({ ...f, [key]: value }))
     setErrors((e) => ({ ...e, [key]: '' }))
   }
@@ -42,6 +45,10 @@ export function Contact() {
     if (form.name.trim().length < 2) e.name = 'Please enter your name.'
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Enter a valid email address.'
     if (form.message.trim().length < 10) e.message = 'Tell us a little more (10+ characters).'
+    const phone = form.phone.trim()
+    if (phone && !/^\+?[\d\s().-]{7,20}$/.test(phone)) e.phone = 'Enter a valid phone number.'
+    // Opting in without a number would leave us with a consent we can't honour.
+    if (form.smsConsent && !phone) e.phone = 'Add a mobile number to receive SMS updates.'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -132,7 +139,15 @@ export function Contact() {
                   <button
                     onClick={() => {
                       setStatus('idle')
-                      setForm({ name: '', email: '', company: '', role: form.role, message: '' })
+                      setForm({
+                        name: '',
+                        email: '',
+                        company: '',
+                        phone: '',
+                        role: form.role,
+                        message: '',
+                        smsConsent: false,
+                      })
                     }}
                     className="mt-8 text-sm text-[var(--color-accent)] hover:underline"
                   >
@@ -202,6 +217,55 @@ export function Contact() {
                     />
                   </Field>
 
+                  <div>
+                    <Field label="Mobile phone" error={errors.phone} optional>
+                      <input
+                        type="tel"
+                        className={cn(
+                          inputBase,
+                          errors.phone ? 'border-[var(--color-danger)]' : 'border-[var(--color-border)]',
+                        )}
+                        value={form.phone}
+                        onChange={(e) => set('phone', e.target.value)}
+                        placeholder="+1 555 000 1234"
+                        autoComplete="tel"
+                      />
+                    </Field>
+
+                    {/* SMS opt-in: unchecked by default and never required — carrier
+                        registration rules treat a pre-checked or mandatory box as invalid consent. */}
+                    <label className="mt-3 flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-soft)] p-3.5">
+                      <input
+                        type="checkbox"
+                        className="sr-only"
+                        checked={form.smsConsent}
+                        onChange={(e) => set('smsConsent', e.target.checked)}
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          'mt-0.5 grid h-4.5 w-4.5 shrink-0 place-items-center rounded border transition-colors',
+                          form.smsConsent
+                            ? 'border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-on-accent)]'
+                            : 'border-[var(--color-border)] bg-[var(--color-surface)]',
+                        )}
+                      >
+                        {form.smsConsent && <Check className="h-3 w-3" strokeWidth={3} />}
+                      </span>
+                      <span className="text-xs leading-relaxed text-[var(--color-ink-muted)]">
+                        {LEGAL.smsConsent}{' '}
+                        <Link to="/privacy" className="text-[var(--color-accent)] hover:underline">
+                          Privacy Policy
+                        </Link>{' '}
+                        and{' '}
+                        <Link to="/privacy#sms-terms" className="text-[var(--color-accent)] hover:underline">
+                          SMS Terms &amp; Conditions
+                        </Link>
+                        .
+                      </span>
+                    </label>
+                  </div>
+
                   <Field label="How can we help?" error={errors.message}>
                     <textarea
                       rows={4}
@@ -229,6 +293,14 @@ export function Contact() {
                       </>
                     )}
                   </Button>
+
+                  <p className="text-center text-xs text-[var(--color-ink-faint)]">
+                    By submitting this form you acknowledge our{' '}
+                    <Link to="/privacy" className="text-[var(--color-accent)] hover:underline">
+                      Privacy Policy
+                    </Link>
+                    .
+                  </p>
                 </motion.form>
               )}
             </AnimatePresence>

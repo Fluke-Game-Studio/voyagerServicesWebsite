@@ -31,6 +31,25 @@ export const BRAND = {
   hero:
     'Enter and scale in the U.S. without building warehouses, hiring logistics teams, or stitching together fragmented providers.',
   email: 'partners@voyagerservices.co',
+  phone: '+1 224-575-3976',
+  phoneHref: '+12245753976',
+  website: 'voyagersupplychain.com',
+}
+
+/* ---- Legal / compliance copy ---- */
+export const LEGAL = {
+  privacyEffectiveDate: 'September 1, 2026',
+  /**
+   * Carrier registration (RingCentral / 10DLC) requires the opt-in checkbox
+   * itself to carry the message types, rate, frequency, STOP/HELP and
+   * "not a condition of purchase" disclosures — so this string is kept next
+   * to the policy copy it mirrors and must stay in sync with it.
+   */
+  smsConsent:
+    'I consent to receive conversational and informational SMS messages from Voyager Services regarding shipment ' +
+    'updates, pickup and delivery coordination, quotes, account notifications, and customer service. Message and ' +
+    'data rates may apply. Messaging frequency may vary. Reply STOP to opt out or HELP for assistance. Consent is ' +
+    'not a condition of purchase.',
 }
 
 /* ---- Slide 5: process ---- */

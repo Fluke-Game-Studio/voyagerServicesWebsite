@@ -2,8 +2,11 @@ export interface ContactPayload {
   name: string
   email: string
   company?: string
+  phone?: string
   role: string
   message: string
+  /** SMS opt-in. Logged server-side with a timestamp as the consent record. */
+  smsConsent?: boolean
 }
 
 export interface ContactResponse {
