@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { motion, motionValue, useMotionValueEvent, useReducedMotion, useScroll } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
@@ -26,6 +26,7 @@ const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
 export function SectionStack({ bands }: { bands: StackBand[] }) {
   const reduce = useReducedMotion()
   const refs = useRef<(HTMLDivElement | null)[]>([])
+  const probe = useRef<HTMLDivElement>(null)
   const [tops, setTops] = useState<number[]>(() => bands.map(() => 0))
 
   // One motion value trio per band, created once (band count is static).
@@ -35,10 +36,25 @@ export function SectionStack({ bands }: { bands: StackBand[] }) {
 
   const { scrollY } = useScroll()
 
+  /**
+   * Viewport height for the sticky maths — read from a `100svh` probe, not
+   * from `window.innerHeight`.
+   *
+   * On mobile `innerHeight` is the *large* viewport height: it grows and
+   * shrinks as the browser chrome hides and shows, and fires `resize` every
+   * time — which happens continuously while scrolling. Recomputing the
+   * negative sticky tops from it re-pinned every band mid-scroll, jumping the
+   * page by the height of the URL bar. `svh` is the small viewport height:
+   * constant across those transitions, and the same unit the hero already
+   * lays out with, so JS and CSS now agree. Falls back to `innerHeight` where
+   * `svh` is unsupported (probe collapses to 0).
+   */
+  const viewportHeight = () => probe.current?.offsetHeight || window.innerHeight
+
   // Covering progress of band i = how far band i+1's top has risen through the
   // viewport (1 when it reaches the top and fully covers its predecessor).
   const update = () => {
-    const vh = window.innerHeight
+    const vh = viewportHeight()
     for (let i = 0; i < bands.length - 1; i++) {
       const next = refs.current[i + 1]
       if (!next) continue
@@ -51,14 +67,18 @@ export function SectionStack({ bands }: { bands: StackBand[] }) {
 
   useMotionValueEvent(scrollY, 'change', update)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (reduce) return
     const measure = () => {
-      const vh = window.innerHeight
-      setTops(bands.map((_, i) => {
+      const vh = viewportHeight()
+      const next = bands.map((_, i) => {
         const el = refs.current[i]
         return el ? Math.min(0, vh - el.offsetHeight) : 0
-      }))
+      })
+      // Bail out when nothing moved. Resize and ResizeObserver both fire freely
+      // during scroll on mobile; re-rendering seven sticky bands each time is
+      // what turned a settled layout into visible judder.
+      setTops((prev) => (prev.length === next.length && prev.every((v, i) => v === next[i]) ? prev : next))
       update()
     }
     measure()
@@ -86,6 +106,9 @@ export function SectionStack({ bands }: { bands: StackBand[] }) {
 
   return (
     <div className="relative">
+      {/* Zero-width `svh` ruler backing viewportHeight() — see the note there. */}
+      <div ref={probe} aria-hidden className="pointer-events-none invisible fixed top-0 left-0 h-svh w-0" />
+
       {bands.map((b, i) => {
         const isLast = i === bands.length - 1
         return (
